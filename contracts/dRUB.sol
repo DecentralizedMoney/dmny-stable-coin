@@ -44,6 +44,11 @@ contract dRUBToken is ERC20, Ownable {
         _burn(from, amount);
     }
 
+    // Функция, вызываемая при отправке Ethereum на контракт
+    receive() external payable {
+        buyTokens();
+    }
+
     // Функция для покупки токенов за Ethereum
     function buyTokens() public payable {
         uint256 tokensToMint = (msg.value * ethToTokenRate) * 10**decimals();

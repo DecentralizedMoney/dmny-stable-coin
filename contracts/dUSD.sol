@@ -22,8 +22,8 @@ contract dUSDToken is ERC20, Ownable {
 
         _mint(msg.sender, 1080 * (10 ** decimals()));
         _setTokenURI("https://assets.dmny.org/dusd.json");
-        ethToTokenRate = 1800;
-        tokenToEthRate = 2600;
+        ethToTokenRate = 1800 * (10 ** decimals());
+        tokenToEthRate = 2600 * (10 ** decimals());
     }
 
     function tokenURI(uint256) public view returns (string memory) {
@@ -44,16 +44,21 @@ contract dUSDToken is ERC20, Ownable {
         _burn(from, amount);
     }
 
+    // Функция, вызываемая при отправке Ethereum на контракт
+    receive() external payable {
+        buyTokens();
+    }
+
     // Функция для покупки токенов за Ethereum
     function buyTokens() public payable {
-        uint256 tokensToMint = (msg.value * ethToTokenRate) * 10**decimals();
+        uint256 tokensToMint = (msg.value * ethToTokenRate) / (10 ** decimals());
         _mint(msg.sender, tokensToMint);
     }
 
     function sellTokens(uint256 amount) public {
         require(balanceOf(msg.sender) >= amount, "Not enough tokens");
-        uint256 ethToReturn = (amount * 10**decimals()) / tokenToEthRate;
-        _burn(msg.sender, amount);
+        uint256 ethToReturn = (amount * tokenToEthRate) / (10 ** decimals());
+         _burn(msg.sender, amount);
         payable(msg.sender).transfer(ethToReturn);
     }
 
