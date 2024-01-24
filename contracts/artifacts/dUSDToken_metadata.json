@@ -684,7 +684,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"dUSD.sol": "dRUBToken"
+			"dUSD.sol": "dUSDToken"
 		},
 		"evmVersion": "shanghai",
 		"libraries": {},
@@ -747,11 +747,11 @@
 			]
 		},
 		"dUSD.sol": {
-			"keccak256": "0xc4067af6ddbb13ce3c3ef3462bcbfc95c7d18b8a0f268fced7d6cd18a0c26765",
+			"keccak256": "0xffd72d6904e38939d8c1064dfd15af0ef89f0fed88984c2037b83294cf9ee0ea",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://4dbf42906e018e5748aada10759488fbabd4325287ac61835e7ea8bc8b367ec2",
-				"dweb:/ipfs/QmWP1Shy2KZJ4t355ZgFicH8BWNUqxwgmABU563bz43puB"
+				"bzz-raw://36929cae53e3e88ad9a0060cfbf200d994382ca500ee164a4a8f49b2cbe9ae56",
+				"dweb:/ipfs/QmXZV3GWQZr2V5H8CpfwkroJyuhZpGgBA61JCEjNzxPBxZ"
 			]
 		}
 	},
