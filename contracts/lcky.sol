@@ -25,8 +25,10 @@ contract LCKYToken is ERC20, Ownable {
 
         //_setupDecimals(18);
 
-        lastMintTime = block.timestamp; // Установка начального времени выпуска
-        totalMinted = 1080 * (10 ** decimals()); // Начальное количество выпущенных токенов
+        //lastMintTime = block.timestamp; // Установка начального времени выпуска
+        lastMintTime = 1660780800; // Джанмаштами UNIX timestamp для 18 августа 2022 года, 00:00 UTC
+        totalMinted = 0; // Начальное количество выпущенных токенов
+        
         _mint(msg.sender, 1080 * (10 ** decimals()));
         _setTokenURI("https://assets.dmny.org/lcky.json");
 
@@ -46,19 +48,20 @@ contract LCKYToken is ERC20, Ownable {
 
     function autoMint() internal {
         uint256 timeElapsed = block.timestamp - lastMintTime;
-        uint256 mintAmount = 0;
-        uint256 remainingSupply = MAX_SUPPLY - totalMinted;
+        if (timeElapsed > 0) {
+            uint256 remainingSupply = MAX_SUPPLY - totalMinted;
+            uint256 firstTerm = remainingSupply / PROGRESSION_DENOMINATOR;
+            //Переделать формулу с учетом целых чисел и деления
+            uint256 r = 1 / PROGRESSION_DENOMINATOR;
 
-        for (uint256 i = 0; i < timeElapsed; i++) {
-            uint256 amountThisSecond = remainingSupply / PROGRESSION_DENOMINATOR;
-            mintAmount += amountThisSecond;
-            remainingSupply -= amountThisSecond;
-        }
+            // Вычисление суммы членов геометрической прогрессии
+            uint256 mintAmount = firstTerm * (1 - (r ** timeElapsed)) / (1 - r);
 
-        if (mintAmount > 0) {
-            _mint(owner(), mintAmount);
-            totalMinted += mintAmount;
-            lastMintTime = block.timestamp;
+            if (mintAmount > 0) {
+                _mint(owner(), mintAmount);
+                totalMinted += mintAmount;
+                lastMintTime = block.timestamp;
+            }
         }
     }
 
