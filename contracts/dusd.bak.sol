@@ -3,39 +3,27 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./AutoMint.sol";
 
-contract LCKYToken is ERC20, Ownable, AutoMint {
+
+
+contract dUSDToken is ERC20, Ownable {
     string private _tokenURI;
     uint256 public ethToTokenRate; // Курс для эмиссии токенов за Ethereum
     uint256 public tokenToEthRate; // Курс для высвобождения Ethereum за токены
 
-    uint256 public totalMinted; // Общее количество выпущенных токенов
-    uint256 public lastMintTime; // Время последнего выпуска токенов
-    uint256 constant MAX_SUPPLY = 108000000000; //(10 ** decimals()); // Максимальный предел выпуска
-
     constructor(string memory name, string memory symbol, address initialOwner)
-        ERC20("LUCKY Coin", "LCKY")
+        ERC20("Decentralized USD", "dUSD")
         Ownable(initialOwner)
-        AutoMint(108000000000 * (10 ** decimals()))
-
     {
-        name="LUCKY Coin";
-        symbol="LCKY";
+        name="Decentralized USD";
+        symbol="dUSD";
 
         //_setupDecimals(18);
 
-        //lastMintTime = block.timestamp; // Установка начального времени выпуска
-        lastMintTime = 1660780800; // Джанмаштами UNIX timestamp для 18 августа 2022 года, 00:00 UTC
-        totalMinted = 0; // Начальное количество выпущенных токенов
-        
         _mint(msg.sender, 1080 * (10 ** decimals()));
-        _setTokenURI("https://assets.dmny.org/lcky.json");
-
+        _setTokenURI("https://assets.dmny.org/dusd.json");
         ethToTokenRate = 1800 * (10 ** decimals());
         tokenToEthRate = 2600 * (10 ** decimals());
-        autoMint(); // Автоэмиссия
-
     }
 
     function tokenURI(uint256) public view returns (string memory) {
@@ -46,25 +34,14 @@ contract LCKYToken is ERC20, Ownable, AutoMint {
         _tokenURI = myTokenURI;
     }
 
-    function _transfer(
-        address sender,
-        address recipient,
-        uint256 amount
-    ) internal override {
-        autoMint(); // Автоматическая эмиссия перед переводом
-        super._transfer(sender, recipient, amount); // Стандартный перевод ERC20
-    }
-
     // Функция для дополнительной эмиссии токенов
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
-        autoMint(); // Автоэмиссия
     }
 
     // Функция для демиссии (сжигания) токенов
     function burn(address from, uint256 amount) public onlyOwner {
         _burn(from, amount);
-        autoMint(); // Автоэмиссия
     }
 
     // Функция, вызываемая при отправке Ethereum на контракт
@@ -76,7 +53,6 @@ contract LCKYToken is ERC20, Ownable, AutoMint {
     function buyTokens() public payable {
         uint256 tokensToMint = (msg.value * ethToTokenRate) / (10 ** decimals());
         _mint(msg.sender, tokensToMint);
-        autoMint(); // Автоэмиссия
     }
 
     function sellTokens(uint256 amount) public {
@@ -84,18 +60,15 @@ contract LCKYToken is ERC20, Ownable, AutoMint {
         uint256 ethToReturn = (amount * tokenToEthRate) / (10 ** decimals());
          _burn(msg.sender, amount);
         payable(msg.sender).transfer(ethToReturn);
-        autoMint(); // Автоэмиссия
     }
 
     // Функции для установки курсов
     function setEthToTokenRate(uint256 newRate) public onlyOwner {
         ethToTokenRate = newRate;
-        autoMint(); // Автоэмиссия
     }
 
     function setTokenToEthRate(uint256 newRate) public onlyOwner {
         tokenToEthRate = newRate;
-        autoMint(); // Автоэмиссия
     }
 
     // Функция для получения текущего курса Ethereum к токену
@@ -109,4 +82,3 @@ contract LCKYToken is ERC20, Ownable, AutoMint {
     }
 
 }
-
